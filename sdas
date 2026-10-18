@@ -10,7 +10,7 @@ local fileCount = 0
 while true do
     local startTime = os.clock()
 
-    for i = 1, 25 do
+    for i = 1, 5 do
         folderCount += 1
 
         local folder = "Folder_" .. folderCount
